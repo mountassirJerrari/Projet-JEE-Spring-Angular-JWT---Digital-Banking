@@ -1,0 +1,90 @@
+package com.example.banking.web;
+
+import com.example.banking.dtos.CustomerDTO;
+import com.example.banking.exceptions.CustomerNotFoundException;
+import com.example.banking.services.BankAccountService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * REST controller for customer-related operations.
+ */
+@RestController
+@RequestMapping("/api/customers")
+@RequiredArgsConstructor
+@Slf4j
+@CrossOrigin("*")
+public class CustomerRestController {
+    private final BankAccountService bankAccountService;
+
+    /**
+     * Get all customers.
+     *
+     * @return List of all customers
+     */
+    @GetMapping
+    public List<CustomerDTO> customers() {
+        return bankAccountService.listCustomers();
+    }
+
+    /**
+     * Get a customer by ID.
+     *
+     * @param id The ID of the customer
+     * @return The customer data
+     * @throws CustomerNotFoundException If the customer is not found
+     */
+    @GetMapping("/{id}")
+    public CustomerDTO getCustomer(@PathVariable(name = "id") Long id) throws CustomerNotFoundException {
+        return bankAccountService.getCustomer(id);
+    }
+
+    /**
+     * Search for customers by name keyword.
+     *
+     * @param keyword The keyword to search for
+     * @return List of matching customers
+     */
+    @GetMapping("/search")
+    public List<CustomerDTO> searchCustomers(@RequestParam(name = "keyword", defaultValue = "") String keyword) {
+        return bankAccountService.searchCustomers(keyword);
+    }
+
+    /**
+     * Create a new customer.
+     *
+     * @param customerDTO The customer data
+     * @return The created customer data
+     */
+    @PostMapping
+    public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO) {
+        return bankAccountService.saveCustomer(customerDTO);
+    }
+
+    /**
+     * Update an existing customer.
+     *
+     * @param customerDTO The customer data with updates
+     * @return The updated customer data
+     * @throws CustomerNotFoundException If the customer is not found
+     */
+    @PutMapping("/{id}")
+    public CustomerDTO updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) throws CustomerNotFoundException {
+        customerDTO.setId(id);
+        return bankAccountService.updateCustomer(customerDTO);
+    }
+
+    /**
+     * Delete a customer by ID.
+     *
+     * @param id The ID of the customer to delete
+     * @throws CustomerNotFoundException If the customer is not found
+     */
+    @DeleteMapping("/{id}")
+    public void deleteCustomer(@PathVariable Long id) throws CustomerNotFoundException {
+        bankAccountService.deleteCustomer(id);
+    }
+}

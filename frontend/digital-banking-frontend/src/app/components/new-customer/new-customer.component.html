@@ -1,0 +1,36 @@
+<div class="container mt-3">
+    <div class="card">
+        <div class="card-header">New Customer</div>
+        <div class="card-body">
+            <div *ngIf="errorMessage" class="text-danger">
+                {{ errorMessage }}
+            </div>
+            <form [formGroup]="newCustomerFormGroup" (ngSubmit)="handleSaveCustomer()">
+                <div class="mb-3">
+                    <label class="form-label">Name:</label>
+                    <input type="text" formControlName="name" class="form-control">
+                    <div *ngIf="newCustomerFormGroup.controls['name'].touched && newCustomerFormGroup.controls['name'].errors"
+                        class="text-danger">
+                        <small *ngIf="newCustomerFormGroup.controls['name'].errors['required']">Name is required</small>
+                        <small *ngIf="newCustomerFormGroup.controls['name'].errors['minlength']">Name must be at least 3
+                            characters</small>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email:</label>
+                    <input type="email" formControlName="email" class="form-control">
+                    <div *ngIf="newCustomerFormGroup.controls['email'].touched && newCustomerFormGroup.controls['email'].errors"
+                        class="text-danger">
+                        <small *ngIf="newCustomerFormGroup.controls['email'].errors['required']">Email is
+                            required</small>
+                        <small *ngIf="newCustomerFormGroup.controls['email'].errors['email']">Invalid email
+                            format</small>
+                    </div>
+                </div>
+                <div class="d-grid gap-2">
+                    <button [disabled]="newCustomerFormGroup.invalid" class="btn btn-success">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

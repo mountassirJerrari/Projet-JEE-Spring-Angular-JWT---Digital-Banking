@@ -14,30 +14,34 @@ export class AccountService {
   constructor(private http: HttpClient) { }
 
   public getAccounts(): Observable<Array<BankAccount>> {
-    return this.http.get<Array<BankAccount>>(`${this.host}/accounts`);
+    return this.http.get<Array<BankAccount>>(`${this.host}/api/accounts`);
   }
 
   public getAccount(accountId: string): Observable<BankAccount> {
-    return this.http.get<BankAccount>(`${this.host}/accounts/${accountId}`);
+    return this.http.get<BankAccount>(`${this.host}/api/accounts/${accountId}`);
   }
 
   public getAccountHistory(accountId: string): Observable<Array<any>> {
-    return this.http.get<Array<any>>(`${this.host}/accounts/${accountId}/operations`);
+    return this.http.get<Array<any>>(`${this.host}/api/accounts/${accountId}/operations`);
   }
 
   public getAccountOperations(accountId: string, page: number, size: number): Observable<AccountHistory> {
-    return this.http.get<AccountHistory>(`${this.host}/accounts/${accountId}/pageOperations?page=${page}&size=${size}`);
+    return this.http.get<AccountHistory>(`${this.host}/api/accounts/${accountId}/pageOperations?page=${page}&size=${size}`);
   }
 
   public debit(debitOperation: DebitOperation): Observable<DebitOperation> {
-    return this.http.post<DebitOperation>(`${this.host}/accounts/debit`, debitOperation);
+    return this.http.post<DebitOperation>(`${this.host}/api/accounts/debit`, debitOperation);
   }
 
   public credit(creditOperation: CreditOperation): Observable<CreditOperation> {
-    return this.http.post<CreditOperation>(`${this.host}/accounts/credit`, creditOperation);
+    return this.http.post<CreditOperation>(`${this.host}/api/accounts/credit`, creditOperation);
   }
 
   public transfer(transferOperation: TransferOperation): Observable<TransferOperation> {
-    return this.http.post<TransferOperation>(`${this.host}/accounts/transfer`, transferOperation);
+    return this.http.post<TransferOperation>(`${this.host}/api/accounts/transfer`, transferOperation);
+  }
+
+  public getCustomerAccounts(customerId: number): Observable<Array<BankAccount>> {
+    return this.http.get<Array<BankAccount>>(`${this.host}/api/accounts/customer/${customerId}`);
   }
 }

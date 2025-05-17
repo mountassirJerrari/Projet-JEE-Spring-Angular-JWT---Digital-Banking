@@ -18,7 +18,7 @@ public interface BankAccountService {
      * @return The saved customer data
      */
     CustomerDTO saveCustomer(CustomerDTO customerDTO);
-    
+
     /**
      * Update an existing customer.
      *
@@ -27,7 +27,7 @@ public interface BankAccountService {
      * @throws CustomerNotFoundException If the customer is not found
      */
     CustomerDTO updateCustomer(CustomerDTO customerDTO) throws CustomerNotFoundException;
-    
+
     /**
      * Delete a customer by ID.
      *
@@ -35,7 +35,7 @@ public interface BankAccountService {
      * @throws CustomerNotFoundException If the customer is not found
      */
     void deleteCustomer(Long customerId) throws CustomerNotFoundException;
-    
+
     /**
      * Create a new current account.
      *
@@ -46,7 +46,7 @@ public interface BankAccountService {
      * @throws CustomerNotFoundException If the customer is not found
      */
     CurrentBankAccountDTO saveCurrentBankAccount(double initialBalance, double overdraft, Long customerId) throws CustomerNotFoundException;
-    
+
     /**
      * Create a new savings account.
      *
@@ -57,14 +57,14 @@ public interface BankAccountService {
      * @throws CustomerNotFoundException If the customer is not found
      */
     SavingBankAccountDTO saveSavingBankAccount(double initialBalance, double interestRate, Long customerId) throws CustomerNotFoundException;
-    
+
     /**
      * Get a list of all customers.
      *
      * @return List of all customers
      */
     List<CustomerDTO> listCustomers();
-    
+
     /**
      * Get a bank account by ID.
      *
@@ -73,7 +73,7 @@ public interface BankAccountService {
      * @throws BankAccountNotFoundException If the account is not found
      */
     BankAccountDTO getBankAccount(String accountId) throws BankAccountNotFoundException;
-    
+
     /**
      * Debit (withdraw) money from an account.
      *
@@ -84,7 +84,7 @@ public interface BankAccountService {
      * @throws BalanceNotSufficientException If the account has insufficient balance
      */
     void debit(String accountId, double amount, String description) throws BankAccountNotFoundException, BalanceNotSufficientException;
-    
+
     /**
      * Credit (deposit) money to an account.
      *
@@ -94,7 +94,7 @@ public interface BankAccountService {
      * @throws BankAccountNotFoundException If the account is not found
      */
     void credit(String accountId, double amount, String description) throws BankAccountNotFoundException;
-    
+
     /**
      * Transfer money between accounts.
      *
@@ -105,7 +105,7 @@ public interface BankAccountService {
      * @throws BalanceNotSufficientException If the source account has insufficient balance
      */
     void transfer(String accountIdSource, String accountIdDestination, double amount) throws BankAccountNotFoundException, BalanceNotSufficientException;
-    
+
     /**
      * Get a list of bank accounts for a customer.
      *
@@ -113,7 +113,7 @@ public interface BankAccountService {
      * @return List of bank accounts owned by the customer
      */
     List<BankAccountDTO> getBankAccountsByCustomer(Long customerId);
-    
+
     /**
      * Get a customer by ID.
      *
@@ -122,7 +122,7 @@ public interface BankAccountService {
      * @throws CustomerNotFoundException If the customer is not found
      */
     CustomerDTO getCustomer(Long customerId) throws CustomerNotFoundException;
-    
+
     /**
      * Get account operations history with pagination.
      *
@@ -133,7 +133,7 @@ public interface BankAccountService {
      * @throws BankAccountNotFoundException If the account is not found
      */
     AccountHistoryDTO getAccountHistory(String accountId, int page, int size) throws BankAccountNotFoundException;
-    
+
     /**
      * Search for customers by name keyword.
      *
@@ -141,4 +141,19 @@ public interface BankAccountService {
      * @return List of matching customers
      */
     List<CustomerDTO> searchCustomers(String keyword);
+
+    /**
+     * Get a list of all bank accounts.
+     *
+     * @return List of all bank accounts
+     */
+    List<BankAccountDTO> bankAccountList();
+
+    /**
+     * Get account operations history without pagination.
+     *
+     * @param accountId The ID of the account
+     * @return List of account operations
+     */
+    List<AccountOperationDTO> accountHistory(String accountId);
 }

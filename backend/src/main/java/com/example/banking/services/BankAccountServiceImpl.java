@@ -71,7 +71,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         log.info("Saving new Current Account for customer ID: {}", customerId);
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
-        
+
         CurrentAccount currentAccount = new CurrentAccount();
         currentAccount.setId(UUID.randomUUID().toString());
         currentAccount.setCreatedAt(new Date());
@@ -79,7 +79,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         currentAccount.setStatus(AccountStatus.CREATED);
         currentAccount.setCustomer(customer);
         currentAccount.setOverdraft(overdraft);
-        
+
         CurrentAccount savedAccount = bankAccountRepository.save(currentAccount);
         return bankAccountMapper.fromCurrentAccount(savedAccount);
     }
@@ -89,7 +89,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         log.info("Saving new Saving Account for customer ID: {}", customerId);
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
-        
+
         SavingAccount savingAccount = new SavingAccount();
         savingAccount.setId(UUID.randomUUID().toString());
         savingAccount.setCreatedAt(new Date());
@@ -97,7 +97,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         savingAccount.setStatus(AccountStatus.CREATED);
         savingAccount.setCustomer(customer);
         savingAccount.setInterestRate(interestRate);
-        
+
         SavingAccount savedAccount = bankAccountRepository.save(savingAccount);
         return bankAccountMapper.fromSavingAccount(savedAccount);
     }
@@ -124,11 +124,11 @@ public class BankAccountServiceImpl implements BankAccountService {
         log.info("Debiting account with ID: {}", accountId);
         BankAccount bankAccount = bankAccountRepository.findById(accountId)
                 .orElseThrow(() -> new BankAccountNotFoundException("Bank Account not found"));
-        
+
         if (bankAccount.getBalance() < amount) {
             throw new BalanceNotSufficientException("Balance not sufficient");
         }
-        
+
         AccountOperation accountOperation = new AccountOperation();
         accountOperation.setType(OperationType.DEBIT);
         accountOperation.setAmount(amount);
@@ -136,7 +136,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         accountOperation.setOperationDate(new Date());
         accountOperation.setBankAccount(bankAccount);
         accountOperationRepository.save(accountOperation);
-        
+
         bankAccount.setBalance(bankAccount.getBalance() - amount);
         bankAccountRepository.save(bankAccount);
     }
@@ -146,7 +146,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         log.info("Crediting account with ID: {}", accountId);
         BankAccount bankAccount = bankAccountRepository.findById(accountId)
                 .orElseThrow(() -> new BankAccountNotFoundException("Bank Account not found"));
-        
+
         AccountOperation accountOperation = new AccountOperation();
         accountOperation.setType(OperationType.CREDIT);
         accountOperation.setAmount(amount);
@@ -154,7 +154,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         accountOperation.setOperationDate(new Date());
         accountOperation.setBankAccount(bankAccount);
         accountOperationRepository.save(accountOperation);
-        
+
         bankAccount.setBalance(bankAccount.getBalance() + amount);
         bankAccountRepository.save(bankAccount);
     }
@@ -188,9 +188,9 @@ public class BankAccountServiceImpl implements BankAccountService {
         log.info("Fetching account history for account ID: {}", accountId);
         BankAccount bankAccount = bankAccountRepository.findById(accountId)
                 .orElseThrow(() -> new BankAccountNotFoundException("Bank Account not found"));
-        
+
         Page<AccountOperation> accountOperations = accountOperationRepository.findByBankAccountId(accountId, PageRequest.of(page, size));
-        
+
         AccountHistoryDTO accountHistoryDTO = new AccountHistoryDTO();
         accountHistoryDTO.setAccountId(bankAccount.getId());
         accountHistoryDTO.setBalance(bankAccount.getBalance());
@@ -198,7 +198,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         accountHistoryDTO.setPageSize(size);
         accountHistoryDTO.setTotalPages(accountOperations.getTotalPages());
         accountHistoryDTO.setAccountOperationDTOS(accountOperationMapper.fromAccountOperations(accountOperations.getContent()));
-        
+
         return accountHistoryDTO;
     }
 
@@ -209,5 +209,21 @@ public class BankAccountServiceImpl implements BankAccountService {
         return customers.stream()
                 .map(customerMapper::fromCustomer)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BankAccountDTO> bankAccountList() {
+        log.info("Fetching all bank accounts");
+        List<BankAccount> bankAccounts = bankAccountRepository.findAll();
+        return bankAccounts.stream()
+                .map(bankAccountMapper::fromBankAccount)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<AccountOperationDTO> accountHistory(String accountId) {
+        log.info("Fetching operations for account ID: {}", accountId);
+        List<AccountOperation> accountOperations = accountOperationRepository.findByBankAccountIdOrderByOperationDateDesc(accountId);
+        return accountOperationMapper.fromAccountOperations(accountOperations);
     }
 }

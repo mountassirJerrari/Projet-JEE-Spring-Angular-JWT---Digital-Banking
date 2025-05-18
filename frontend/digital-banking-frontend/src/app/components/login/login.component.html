@@ -1,1 +1,41 @@
-<p>login works!</p>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Login</div>
+                <div class="card-body">
+                    <div *ngIf="errorMessage" class="alert alert-danger">
+                        {{ errorMessage }}
+                    </div>
+                    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" formControlName="username"
+                                [ngClass]="{'is-invalid': loginForm.get('username')?.invalid && loginForm.get('username')?.touched}" />
+                            <div *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
+                                class="invalid-feedback">
+                                Username is required
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" formControlName="password"
+                                [ngClass]="{'is-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}" />
+                            <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+                                class="invalid-feedback">
+                                Password is required
+                            </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid || loading">
+                                <span *ngIf="loading" class="spinner-border spinner-border-sm me-1" role="status"
+                                    aria-hidden="true"></span>
+                                Login
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

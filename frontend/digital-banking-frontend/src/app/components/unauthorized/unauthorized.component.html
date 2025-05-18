@@ -1,0 +1,24 @@
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h4>Unauthorized Access</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        You do not have permission to access this resource.
+                    </div>
+                    <p>
+                        Please contact your administrator if you believe this is an error.
+                    </p>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" (click)="goBack()">Go Back</button>
+                        <button class="btn btn-secondary" (click)="goHome()">Go to Home</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

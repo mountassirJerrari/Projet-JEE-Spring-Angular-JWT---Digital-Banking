@@ -19,5 +19,6 @@ public class BankAccountDTO {
     private Date createdAt;
     private AccountStatus status;
     private String type;
+    private String createdBy;
     private CustomerDTO customerDTO;
 }

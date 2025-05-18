@@ -1,6 +1,17 @@
 <div class="container mt-2">
     <div class="card">
-        <div class="card-header">Accounts</div>
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-6">
+                    Accounts
+                </div>
+                <div class="col-md-6 text-end">
+                    <button *ngIf="authService.isAdmin()" routerLink="/new-account" class="btn btn-success">
+                        <i class="bi bi-plus"></i> New Account
+                    </button>
+                </div>
+            </div>
+        </div>
         <div class="card-body">
             <div *ngIf="errorMessage" class="text-danger">
                 {{ errorMessage }}
@@ -14,6 +25,7 @@
                             <th>Balance</th>
                             <th>Created At</th>
                             <th>Status</th>
+                            <th>Created By</th>
                             <th>Customer</th>
                             <th>Operations</th>
                         </tr>
@@ -25,6 +37,7 @@
                             <td>{{ account.balance | number: '1.2-2' }}</td>
                             <td>{{ account.createdAt | date: 'dd/MM/yyyy' }}</td>
                             <td>{{ account.status }}</td>
+                            <td>{{ account.createdBy }}</td>
                             <td>{{ account.customerDTO.name }}</td>
                             <td>
                                 <button (click)="handleAccountOperations(account)" class="btn btn-success">

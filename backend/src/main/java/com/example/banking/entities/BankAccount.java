@@ -22,20 +22,25 @@ import java.util.List;
 public abstract class BankAccount {
     @Id
     private String id;
-    
+
     private double balance;
-    
+
     private Date createdAt;
-    
+
     @Enumerated(EnumType.STRING)
     private AccountStatus status;
-    
+
+    /**
+     * Username of the user who created this account.
+     */
+    private String createdBy;
+
     /**
      * The customer who owns this account.
      */
     @ManyToOne
     private Customer customer;
-    
+
     /**
      * List of operations performed on this account.
      */

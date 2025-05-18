@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, Observable, throwError } from 'rxjs';
 import { AccountHistory } from '../../models/operation.model';
 import { AccountService } from '../../services/account.service';
+import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -27,8 +28,9 @@ export class OperationsComponent implements OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private accountService: AccountService,
-    private router: Router
-  ) {}
+    private router: Router,
+    public authService: AuthService
+  ) { }
 
   ngOnInit(): void {
     this.accountId = this.route.snapshot.params['id'];

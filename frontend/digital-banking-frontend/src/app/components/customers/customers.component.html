@@ -17,7 +17,7 @@
                     </form>
                 </div>
                 <div class="col-md-6 text-end">
-                    <button (click)="handleNewCustomer()" class="btn btn-success">
+                    <button *ngIf="authService.isAdmin()" (click)="handleNewCustomer()" class="btn btn-success">
                         <i class="bi bi-plus"></i> New Customer
                     </button>
                 </div>
@@ -29,6 +29,8 @@
                             <th>ID</th>
                             <th>Name</th>
                             <th>Email</th>
+                            <th>Created By</th>
+                            <th>Created At</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -37,11 +39,14 @@
                             <td>{{ customer.id }}</td>
                             <td>{{ customer.name }}</td>
                             <td>{{ customer.email }}</td>
+                            <td>{{ customer.createdBy }}</td>
+                            <td>{{ customer.createdAt | date: 'medium' }}</td>
                             <td>
                                 <button (click)="handleCustomerAccounts(customer)" class="btn btn-info me-1">
                                     <i class="bi bi-list"></i>
                                 </button>
-                                <button (click)="handleDeleteCustomer(customer)" class="btn btn-danger">
+                                <button *ngIf="authService.isAdmin()" (click)="handleDeleteCustomer(customer)"
+                                    class="btn btn-danger">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </td>

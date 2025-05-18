@@ -18,7 +18,7 @@ public interface AccountOperationRepository extends JpaRepository<AccountOperati
      * @return List of operations for the account
      */
     List<AccountOperation> findByBankAccountId(String accountId);
-    
+
     /**
      * Find operations for a specific bank account with pagination.
      *
@@ -27,7 +27,7 @@ public interface AccountOperationRepository extends JpaRepository<AccountOperati
      * @return Page of operations for the account
      */
     Page<AccountOperation> findByBankAccountId(String accountId, Pageable pageable);
-    
+
     /**
      * Find operations for a specific bank account ordered by date (descending).
      *
@@ -35,4 +35,11 @@ public interface AccountOperationRepository extends JpaRepository<AccountOperati
      * @return List of operations for the account ordered by date
      */
     List<AccountOperation> findByBankAccountIdOrderByOperationDateDesc(String accountId);
+
+    /**
+     * Delete all operations for a specific bank account.
+     *
+     * @param accountId The ID of the bank account
+     */
+    void deleteByBankAccountId(String accountId);
 }

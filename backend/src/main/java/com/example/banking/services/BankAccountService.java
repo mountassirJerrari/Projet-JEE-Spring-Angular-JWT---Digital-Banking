@@ -156,4 +156,21 @@ public interface BankAccountService {
      * @return List of account operations
      */
     List<AccountOperationDTO> accountHistory(String accountId);
+
+    /**
+     * Search for bank accounts by balance range.
+     *
+     * @param minBalance The minimum balance
+     * @param maxBalance The maximum balance
+     * @return List of bank accounts within the balance range
+     */
+    List<BankAccountDTO> searchAccountsByBalanceRange(double minBalance, double maxBalance);
+
+    /**
+     * Search for bank accounts by customer name.
+     *
+     * @param customerName The customer name to search for
+     * @return List of bank accounts owned by customers with matching names
+     */
+    List<BankAccountDTO> searchAccountsByCustomerName(String customerName);
 }

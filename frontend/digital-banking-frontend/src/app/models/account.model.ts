@@ -6,6 +6,7 @@ export interface BankAccount {
   createdAt: Date;
   status: string;
   type: string;
+  createdBy: string;
   customerDTO: Customer;
 }
 

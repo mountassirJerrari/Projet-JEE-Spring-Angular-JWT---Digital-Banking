@@ -4,6 +4,7 @@ export interface AccountOperation {
   amount: number;
   type: string;
   description: string;
+  createdBy: string;
 }
 
 export interface AccountHistory {

@@ -15,31 +15,36 @@
       <div class="card">
         <div class="card-header">Operation Form</div>
         <div class="card-body">
-          <form [formGroup]="operationFormGroup" (ngSubmit)="handleOperation()">
-            <div class="mb-3">
-              <label class="form-label">Operation Type:</label>
-              <select formControlName="operationType" class="form-select">
-                <option value="DEBIT">DEBIT</option>
-                <option value="CREDIT">CREDIT</option>
-                <option value="TRANSFER">TRANSFER</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Amount:</label>
-              <input type="number" formControlName="amount" class="form-control" />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Description:</label>
-              <input type="text" formControlName="description" class="form-control" />
-            </div>
-            <div class="mb-3" *ngIf="operationFormGroup.value.operationType === 'TRANSFER'">
-              <label class="form-label">Destination Account:</label>
-              <input type="text" formControlName="accountDestination" class="form-control" />
-            </div>
-            <div class="d-grid">
-              <button class="btn btn-success" type="submit">Save Operation</button>
-            </div>
-          </form>
+          <div *ngIf="!authService.isAdmin() && !authService.isUser()" class="alert alert-warning">
+            You need to be logged in to perform operations.
+          </div>
+          <div *ngIf="authService.isUser() || authService.isAdmin()">
+            <form [formGroup]="operationFormGroup" (ngSubmit)="handleOperation()">
+              <div class="mb-3">
+                <label class="form-label">Operation Type:</label>
+                <select formControlName="operationType" class="form-select">
+                  <option value="DEBIT">DEBIT</option>
+                  <option value="CREDIT">CREDIT</option>
+                  <option value="TRANSFER">TRANSFER</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Amount:</label>
+                <input type="number" formControlName="amount" class="form-control" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Description:</label>
+                <input type="text" formControlName="description" class="form-control" />
+              </div>
+              <div class="mb-3" *ngIf="operationFormGroup.value.operationType === 'TRANSFER'">
+                <label class="form-label">Destination Account:</label>
+                <input type="text" formControlName="accountDestination" class="form-control" />
+              </div>
+              <div class="d-grid">
+                <button class="btn btn-success" type="submit">Save Operation</button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -61,6 +66,7 @@
                 <th>Type</th>
                 <th>Amount</th>
                 <th>Description</th>
+                <th>Performed By</th>
               </tr>
             </thead>
             <tbody>
@@ -70,14 +76,13 @@
                 <td>{{ op.type }}</td>
                 <td>{{ op.amount | number: '1.2-2' }}</td>
                 <td>{{ op.description }}</td>
+                <td>{{ op.createdBy }}</td>
               </tr>
             </tbody>
           </table>
           <ul class="pagination">
-            <li
-              *ngFor="let item of [].constructor(accountHistory.totalPages); let page = index"
-              [ngClass]="page === accountHistory.currentPage ? 'page-item active' : 'page-item'"
-            >
+            <li *ngFor="let item of [].constructor(accountHistory.totalPages); let page = index"
+              [ngClass]="page === accountHistory.currentPage ? 'page-item active' : 'page-item'">
               <a (click)="gotoPage(page)" class="page-link">{{ page }}</a>
             </li>
           </ul>

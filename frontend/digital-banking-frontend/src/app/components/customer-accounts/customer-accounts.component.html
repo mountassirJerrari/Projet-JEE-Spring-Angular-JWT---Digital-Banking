@@ -16,6 +16,7 @@
                             <th>Balance</th>
                             <th>Created At</th>
                             <th>Status</th>
+                            <th>Created By</th>
                             <th>Operations</th>
                         </tr>
                     </thead>
@@ -26,6 +27,7 @@
                             <td>{{ account.balance | number: '1.2-2' }}</td>
                             <td>{{ account.createdAt | date: 'dd/MM/yyyy' }}</td>
                             <td>{{ account.status }}</td>
+                            <td>{{ account.createdBy }}</td>
                             <td>
                                 <button (click)="handleAccountOperations(account)" class="btn btn-success">
                                     <i class="bi bi-list"></i>

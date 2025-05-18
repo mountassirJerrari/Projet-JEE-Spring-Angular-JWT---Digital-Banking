@@ -13,6 +13,7 @@ import com.example.banking.mappers.CustomerMapper;
 import com.example.banking.repositories.AccountOperationRepository;
 import com.example.banking.repositories.BankAccountRepository;
 import com.example.banking.repositories.CustomerRepository;
+import com.example.banking.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -44,6 +45,11 @@ public class BankAccountServiceImpl implements BankAccountService {
     public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
         log.info("Saving new Customer");
         Customer customer = customerMapper.toCustomer(customerDTO);
+
+        // Set the created by and created at fields
+        customer.setCreatedBy(SecurityUtils.getCurrentUsername());
+        customer.setCreatedAt(new Date());
+
         Customer savedCustomer = customerRepository.save(customer);
         return customerMapper.fromCustomer(savedCustomer);
     }
@@ -51,9 +57,14 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     public CustomerDTO updateCustomer(CustomerDTO customerDTO) throws CustomerNotFoundException {
         log.info("Updating Customer with ID: {}", customerDTO.getId());
-        customerRepository.findById(customerDTO.getId())
+        Customer existingCustomer = customerRepository.findById(customerDTO.getId())
                 .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
+
+        // Map DTO to entity but preserve creation info
         Customer customer = customerMapper.toCustomer(customerDTO);
+        customer.setCreatedBy(existingCustomer.getCreatedBy());
+        customer.setCreatedAt(existingCustomer.getCreatedAt());
+
         Customer updatedCustomer = customerRepository.save(customer);
         return customerMapper.fromCustomer(updatedCustomer);
     }
@@ -63,6 +74,24 @@ public class BankAccountServiceImpl implements BankAccountService {
         log.info("Deleting Customer with ID: {}", customerId);
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
+
+        // First, find all accounts associated with this customer
+        List<BankAccount> customerAccounts = bankAccountRepository.findByCustomerId(customerId);
+
+        // For each account, delete all associated operations first
+        for (BankAccount account : customerAccounts) {
+            log.info("Deleting operations for account ID: {}", account.getId());
+            accountOperationRepository.deleteByBankAccountId(account.getId());
+        }
+
+        // Then delete all the accounts
+        if (!customerAccounts.isEmpty()) {
+            log.info("Deleting {} accounts for customer ID: {}", customerAccounts.size(), customerId);
+            bankAccountRepository.deleteAll(customerAccounts);
+        }
+
+        // Finally delete the customer
+        log.info("Deleting customer record for ID: {}", customerId);
         customerRepository.delete(customer);
     }
 
@@ -79,6 +108,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         currentAccount.setStatus(AccountStatus.CREATED);
         currentAccount.setCustomer(customer);
         currentAccount.setOverdraft(overdraft);
+        currentAccount.setCreatedBy(SecurityUtils.getCurrentUsername());
 
         CurrentAccount savedAccount = bankAccountRepository.save(currentAccount);
         return bankAccountMapper.fromCurrentAccount(savedAccount);
@@ -97,6 +127,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         savingAccount.setStatus(AccountStatus.CREATED);
         savingAccount.setCustomer(customer);
         savingAccount.setInterestRate(interestRate);
+        savingAccount.setCreatedBy(SecurityUtils.getCurrentUsername());
 
         SavingAccount savedAccount = bankAccountRepository.save(savingAccount);
         return bankAccountMapper.fromSavingAccount(savedAccount);
@@ -135,6 +166,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         accountOperation.setDescription(description);
         accountOperation.setOperationDate(new Date());
         accountOperation.setBankAccount(bankAccount);
+        accountOperation.setCreatedBy(SecurityUtils.getCurrentUsername());
         accountOperationRepository.save(accountOperation);
 
         bankAccount.setBalance(bankAccount.getBalance() - amount);
@@ -153,6 +185,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         accountOperation.setDescription(description);
         accountOperation.setOperationDate(new Date());
         accountOperation.setBankAccount(bankAccount);
+        accountOperation.setCreatedBy(SecurityUtils.getCurrentUsername());
         accountOperationRepository.save(accountOperation);
 
         bankAccount.setBalance(bankAccount.getBalance() + amount);
@@ -225,5 +258,23 @@ public class BankAccountServiceImpl implements BankAccountService {
         log.info("Fetching operations for account ID: {}", accountId);
         List<AccountOperation> accountOperations = accountOperationRepository.findByBankAccountIdOrderByOperationDateDesc(accountId);
         return accountOperationMapper.fromAccountOperations(accountOperations);
+    }
+
+    @Override
+    public List<BankAccountDTO> searchAccountsByBalanceRange(double minBalance, double maxBalance) {
+        log.info("Searching accounts with balance between {} and {}", minBalance, maxBalance);
+        List<BankAccount> bankAccounts = bankAccountRepository.findByBalanceBetween(minBalance, maxBalance);
+        return bankAccounts.stream()
+                .map(bankAccountMapper::fromBankAccount)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BankAccountDTO> searchAccountsByCustomerName(String customerName) {
+        log.info("Searching accounts by customer name: {}", customerName);
+        List<BankAccount> bankAccounts = bankAccountRepository.findByCustomerNameContainsIgnoreCase(customerName);
+        return bankAccounts.stream()
+                .map(bankAccountMapper::fromBankAccount)
+                .collect(Collectors.toList());
     }
 }

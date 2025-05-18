@@ -1,0 +1,78 @@
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">New Account</div>
+        <div class="card-body">
+            <div *ngIf="errorMessage" class="alert alert-danger">
+                {{ errorMessage }}
+            </div>
+            <div *ngIf="successMessage" class="alert alert-success">
+                {{ successMessage }}
+            </div>
+            <form [formGroup]="accountFormGroup" (ngSubmit)="handleSaveAccount()">
+                <div class="mb-3">
+                    <label class="form-label">Customer:</label>
+                    <select formControlName="customerId" class="form-select">
+                        <option value="">-- Select Customer --</option>
+                        <option *ngFor="let customer of customers" [value]="customer.id">
+                            {{ customer.name }} ({{ customer.email }})
+                        </option>
+                    </select>
+                    <div *ngIf="accountFormGroup.controls['customerId'].invalid && accountFormGroup.controls['customerId'].touched"
+                        class="text-danger">
+                        Customer is required
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Account Type:</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" formControlName="accountType" value="CURRENT"
+                            id="currentAccount">
+                        <label class="form-check-label" for="currentAccount">
+                            Current Account
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" formControlName="accountType" value="SAVING"
+                            id="savingAccount">
+                        <label class="form-check-label" for="savingAccount">
+                            Saving Account
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Initial Balance:</label>
+                    <input type="number" formControlName="initialBalance" class="form-control">
+                    <div *ngIf="accountFormGroup.controls['initialBalance'].invalid && accountFormGroup.controls['initialBalance'].touched"
+                        class="text-danger">
+                        Initial balance must be a positive number
+                    </div>
+                </div>
+
+                <div *ngIf="accountType === 'CURRENT'" class="mb-3">
+                    <label class="form-label">Overdraft:</label>
+                    <input type="number" formControlName="overdraft" class="form-control">
+                    <div *ngIf="accountFormGroup.controls['overdraft'].invalid && accountFormGroup.controls['overdraft'].touched"
+                        class="text-danger">
+                        Overdraft must be a positive number
+                    </div>
+                </div>
+
+                <div *ngIf="accountType === 'SAVING'" class="mb-3">
+                    <label class="form-label">Interest Rate (%):</label>
+                    <input type="number" formControlName="interestRate" class="form-control">
+                    <div *ngIf="accountFormGroup.controls['interestRate'].invalid && accountFormGroup.controls['interestRate'].touched"
+                        class="text-danger">
+                        Interest rate must be between 0 and 100
+                    </div>
+                </div>
+
+                <div class="d-grid">
+                    <button [disabled]="!accountFormGroup.valid" class="btn btn-primary" type="submit">Create
+                        Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

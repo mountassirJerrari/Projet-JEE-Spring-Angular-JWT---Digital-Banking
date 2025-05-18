@@ -1,0 +1,84 @@
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">Account Search</div>
+        <div class="card-body">
+            <form [formGroup]="searchFormGroup" (ngSubmit)="handleSearchAccounts()">
+                <div class="mb-3">
+                    <label class="form-label">Search Type:</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" formControlName="searchType" value="balance"
+                            id="balanceSearch">
+                        <label class="form-check-label" for="balanceSearch">
+                            Search by Balance Range
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" formControlName="searchType" value="customer"
+                            id="customerSearch">
+                        <label class="form-check-label" for="customerSearch">
+                            Search by Customer Name
+                        </label>
+                    </div>
+                </div>
+
+                <div *ngIf="searchType === 'balance'" class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Minimum Balance:</label>
+                        <input type="number" formControlName="minBalance" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Maximum Balance:</label>
+                        <input type="number" formControlName="maxBalance" class="form-control">
+                    </div>
+                </div>
+
+                <div *ngIf="searchType === 'customer'" class="mb-3">
+                    <label class="form-label">Customer Name:</label>
+                    <input type="text" formControlName="customerName" class="form-control">
+                </div>
+
+                <div class="d-grid">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </form>
+
+            <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+                {{ errorMessage }}
+            </div>
+
+            <div *ngIf="accounts.length > 0" class="mt-4">
+                <h4>Search Results</h4>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Type</th>
+                            <th>Balance</th>
+                            <th>Created Date</th>
+                            <th>Status</th>
+                            <th>Created By</th>
+                            <th>Customer</th>
+                            <th>Operations</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let account of accounts">
+                            <td>{{ account.id }}</td>
+                            <td>{{ account.type }}</td>
+                            <td>{{ account.balance | number: '1.2-2' }}</td>
+                            <td>{{ account.createdAt | date: 'medium' }}</td>
+                            <td>{{ account.status }}</td>
+                            <td>{{ account.createdBy }}</td>
+                            <td>{{ account.customerDTO?.name }}</td>
+                            <td>
+                                <button (click)="handleAccountOperations(account)" class="btn btn-info btn-sm">
+                                    <i class="bi bi-list"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

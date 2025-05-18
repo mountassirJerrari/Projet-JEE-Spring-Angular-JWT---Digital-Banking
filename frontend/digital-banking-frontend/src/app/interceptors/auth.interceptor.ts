@@ -15,6 +15,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   // If token exists, add it to the request header
   if (token) {
+    console.log('Adding token to request:', req.url);
     const authReq = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`
@@ -24,5 +25,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   // If no token, proceed with original request
+  console.log('No token available for request:', req.url);
   return next(req);
 };

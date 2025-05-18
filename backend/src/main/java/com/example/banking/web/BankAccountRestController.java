@@ -3,6 +3,7 @@ package com.example.banking.web;
 import com.example.banking.dtos.*;
 import com.example.banking.exceptions.BalanceNotSufficientException;
 import com.example.banking.exceptions.BankAccountNotFoundException;
+import com.example.banking.exceptions.CustomerNotFoundException;
 import com.example.banking.services.BankAccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -119,5 +120,77 @@ public class BankAccountRestController {
                 transferRequestDTO.getAccountSource(),
                 transferRequestDTO.getAccountDestination(),
                 transferRequestDTO.getAmount());
+    }
+
+    /**
+     * Get a list of bank accounts for a customer.
+     *
+     * @param customerId The ID of the customer
+     * @return List of bank accounts owned by the customer
+     */
+    @GetMapping("/accounts/customer/{customerId}")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
+    public List<BankAccountDTO> getAccountsByCustomer(@PathVariable Long customerId) {
+        return bankAccountService.getBankAccountsByCustomer(customerId);
+    }
+
+    /**
+     * Search for bank accounts by balance range.
+     *
+     * @param minBalance The minimum balance
+     * @param maxBalance The maximum balance
+     * @return List of bank accounts within the balance range
+     */
+    @GetMapping("/accounts/search/balance")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
+    public List<BankAccountDTO> searchAccountsByBalanceRange(
+            @RequestParam(name = "min", defaultValue = "0") double minBalance,
+            @RequestParam(name = "max", defaultValue = "1000000") double maxBalance) {
+        return bankAccountService.searchAccountsByBalanceRange(minBalance, maxBalance);
+    }
+
+    /**
+     * Search for bank accounts by customer name.
+     *
+     * @param customerName The customer name to search for
+     * @return List of bank accounts owned by customers with matching names
+     */
+    @GetMapping("/accounts/search/customer")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
+    public List<BankAccountDTO> searchAccountsByCustomerName(
+            @RequestParam(name = "name") String customerName) {
+        return bankAccountService.searchAccountsByCustomerName(customerName);
+    }
+
+    /**
+     * Create a new current account.
+     *
+     * @param accountRequestDTO The account creation data
+     * @return The created current account
+     * @throws CustomerNotFoundException If the customer is not found
+     */
+    @PostMapping("/accounts/current")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    public CurrentBankAccountDTO createCurrentAccount(@RequestBody AccountRequestDTO accountRequestDTO) throws CustomerNotFoundException {
+        return bankAccountService.saveCurrentBankAccount(
+                accountRequestDTO.getInitialBalance(),
+                accountRequestDTO.getOverdraft(),
+                accountRequestDTO.getCustomerId());
+    }
+
+    /**
+     * Create a new saving account.
+     *
+     * @param accountRequestDTO The account creation data
+     * @return The created saving account
+     * @throws CustomerNotFoundException If the customer is not found
+     */
+    @PostMapping("/accounts/saving")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    public SavingBankAccountDTO createSavingAccount(@RequestBody AccountRequestDTO accountRequestDTO) throws CustomerNotFoundException {
+        return bankAccountService.saveSavingBankAccount(
+                accountRequestDTO.getInitialBalance(),
+                accountRequestDTO.getInterestRate(),
+                accountRequestDTO.getCustomerId());
     }
 }

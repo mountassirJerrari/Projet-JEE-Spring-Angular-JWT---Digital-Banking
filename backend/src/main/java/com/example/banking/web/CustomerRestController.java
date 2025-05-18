@@ -21,61 +21,31 @@ import java.util.List;
 public class CustomerRestController {
     private final BankAccountService bankAccountService;
 
-    /**
-     * Get all customers.
-     *
-     * @return List of all customers
-     */
+
     @GetMapping
     @PreAuthorize("hasAuthority('SCOPE_USER')")
     public List<CustomerDTO> customers() {
         return bankAccountService.listCustomers();
     }
 
-    /**
-     * Get a customer by ID.
-     *
-     * @param id The ID of the customer
-     * @return The customer data
-     * @throws CustomerNotFoundException If the customer is not found
-     */
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('SCOPE_USER')")
     public CustomerDTO getCustomer(@PathVariable(name = "id") Long id) throws CustomerNotFoundException {
         return bankAccountService.getCustomer(id);
     }
 
-    /**
-     * Search for customers by name keyword.
-     *
-     * @param keyword The keyword to search for
-     * @return List of matching customers
-     */
     @GetMapping("/search")
     @PreAuthorize("hasAuthority('SCOPE_USER')")
     public List<CustomerDTO> searchCustomers(@RequestParam(name = "keyword", defaultValue = "") String keyword) {
         return bankAccountService.searchCustomers(keyword);
     }
 
-    /**
-     * Create a new customer.
-     *
-     * @param customerDTO The customer data
-     * @return The created customer data
-     */
     @PostMapping
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO) {
         return bankAccountService.saveCustomer(customerDTO);
     }
 
-    /**
-     * Update an existing customer.
-     *
-     * @param customerDTO The customer data with updates
-     * @return The updated customer data
-     * @throws CustomerNotFoundException If the customer is not found
-     */
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public CustomerDTO updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) throws CustomerNotFoundException {
@@ -83,12 +53,6 @@ public class CustomerRestController {
         return bankAccountService.updateCustomer(customerDTO);
     }
 
-    /**
-     * Delete a customer by ID.
-     *
-     * @param id The ID of the customer to delete
-     * @throws CustomerNotFoundException If the customer is not found
-     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public void deleteCustomer(@PathVariable Long id) throws CustomerNotFoundException {

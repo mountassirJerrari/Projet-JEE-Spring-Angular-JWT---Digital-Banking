@@ -7,11 +7,28 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
+                <li class="nav-item" *ngIf="authService.isLoggedIn()">
                     <a class="nav-link" routerLink="/customers" routerLinkActive="active">Customers</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" *ngIf="authService.isLoggedIn()">
                     <a class="nav-link" routerLink="/accounts" routerLinkActive="active">Accounts</a>
+                </li>
+                <li class="nav-item" *ngIf="authService.isLoggedIn()">
+                    <a class="nav-link" routerLink="/account-search" routerLinkActive="active">Account Search</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item" *ngIf="!authService.isLoggedIn()">
+                    <a class="nav-link" routerLink="/login" routerLinkActive="active">Login</a>
+                </li>
+                <li class="nav-item" *ngIf="authService.isLoggedIn()">
+                    <span class="nav-link">
+                        <i class="bi bi-person-circle"></i> {{ authService.getUsername() }}
+                        <span *ngIf="authService.isAdmin()" class="badge bg-danger ms-1">Admin</span>
+                    </span>
+                </li>
+                <li class="nav-item" *ngIf="authService.isLoggedIn()">
+                    <a class="nav-link" href="#" (click)="logout(); $event.preventDefault()">Logout</a>
                 </li>
             </ul>
         </div>

@@ -8,9 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
-/**
- * Entity representing an operation performed on a bank account.
- */
 @Entity
 @Data
 @NoArgsConstructor
@@ -19,24 +16,15 @@ public class AccountOperation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private Date operationDate;
-
     private double amount;
-
     private String description;
 
     @Enumerated(EnumType.STRING)
     private OperationType type;
 
-    /**
-     * Username of the user who performed this operation.
-     */
     private String createdBy;
 
-    /**
-     * The bank account on which this operation was performed.
-     */
     @ManyToOne
     private BankAccount bankAccount;
 }

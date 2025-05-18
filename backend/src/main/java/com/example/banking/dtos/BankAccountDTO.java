@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
-/**
- * Base DTO for BankAccount entity.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

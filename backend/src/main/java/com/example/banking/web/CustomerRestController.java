@@ -5,6 +5,7 @@ import com.example.banking.exceptions.CustomerNotFoundException;
 import com.example.banking.services.BankAccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class CustomerRestController {
      * @return List of all customers
      */
     @GetMapping
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public List<CustomerDTO> customers() {
         return bankAccountService.listCustomers();
     }
@@ -38,6 +40,7 @@ public class CustomerRestController {
      * @throws CustomerNotFoundException If the customer is not found
      */
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public CustomerDTO getCustomer(@PathVariable(name = "id") Long id) throws CustomerNotFoundException {
         return bankAccountService.getCustomer(id);
     }
@@ -49,6 +52,7 @@ public class CustomerRestController {
      * @return List of matching customers
      */
     @GetMapping("/search")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public List<CustomerDTO> searchCustomers(@RequestParam(name = "keyword", defaultValue = "") String keyword) {
         return bankAccountService.searchCustomers(keyword);
     }
@@ -60,6 +64,7 @@ public class CustomerRestController {
      * @return The created customer data
      */
     @PostMapping
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO) {
         return bankAccountService.saveCustomer(customerDTO);
     }
@@ -72,6 +77,7 @@ public class CustomerRestController {
      * @throws CustomerNotFoundException If the customer is not found
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public CustomerDTO updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) throws CustomerNotFoundException {
         customerDTO.setId(id);
         return bankAccountService.updateCustomer(customerDTO);
@@ -84,6 +90,7 @@ public class CustomerRestController {
      * @throws CustomerNotFoundException If the customer is not found
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public void deleteCustomer(@PathVariable Long id) throws CustomerNotFoundException {
         bankAccountService.deleteCustomer(id);
     }

@@ -6,6 +6,7 @@ import com.example.banking.exceptions.BankAccountNotFoundException;
 import com.example.banking.services.BankAccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
  * REST controller for bank account-related operations.
  */
 @RestController
+@RequestMapping("/api")
 @CrossOrigin("*")
 @RequiredArgsConstructor
 @Slf4j
@@ -28,6 +30,7 @@ public class BankAccountRestController {
      * @throws BankAccountNotFoundException If the account is not found
      */
     @GetMapping("/accounts/{accountId}")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public BankAccountDTO getBankAccount(@PathVariable String accountId) throws BankAccountNotFoundException {
         return bankAccountService.getBankAccount(accountId);
     }
@@ -38,6 +41,7 @@ public class BankAccountRestController {
      * @return List of all bank accounts
      */
     @GetMapping("/accounts")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public List<BankAccountDTO> listAccounts() {
         return bankAccountService.bankAccountList();
     }
@@ -49,6 +53,7 @@ public class BankAccountRestController {
      * @return List of account operations
      */
     @GetMapping("/accounts/{accountId}/operations")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public List<AccountOperationDTO> getHistory(@PathVariable String accountId) {
         return bankAccountService.accountHistory(accountId);
     }
@@ -63,6 +68,7 @@ public class BankAccountRestController {
      * @throws BankAccountNotFoundException If the account is not found
      */
     @GetMapping("/accounts/{accountId}/pageOperations")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public AccountHistoryDTO getAccountHistory(
             @PathVariable String accountId,
             @RequestParam(name = "page", defaultValue = "0") int page,
@@ -79,6 +85,7 @@ public class BankAccountRestController {
      * @throws BalanceNotSufficientException If the account has insufficient balance
      */
     @PostMapping("/accounts/debit")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public DebitDTO debit(@RequestBody DebitDTO debitDTO) throws BankAccountNotFoundException, BalanceNotSufficientException {
         bankAccountService.debit(debitDTO.getAccountId(), debitDTO.getAmount(), debitDTO.getDescription());
         return debitDTO;
@@ -92,6 +99,7 @@ public class BankAccountRestController {
      * @throws BankAccountNotFoundException If the account is not found
      */
     @PostMapping("/accounts/credit")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public CreditDTO credit(@RequestBody CreditDTO creditDTO) throws BankAccountNotFoundException {
         bankAccountService.credit(creditDTO.getAccountId(), creditDTO.getAmount(), creditDTO.getDescription());
         return creditDTO;
@@ -105,6 +113,7 @@ public class BankAccountRestController {
      * @throws BalanceNotSufficientException If the source account has insufficient balance
      */
     @PostMapping("/accounts/transfer")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public void transfer(@RequestBody TransferRequestDTO transferRequestDTO) throws BankAccountNotFoundException, BalanceNotSufficientException {
         bankAccountService.transfer(
                 transferRequestDTO.getAccountSource(),

@@ -24,12 +24,19 @@ export class AuthService {
   constructor(private http: HttpClient) { }
 
   login(username: string, password: string): Observable<any> {
+    console.log('Login attempt for user:', username);
+    console.log('Login URL:', `${this.host}/login`);
+
     // The backend host already includes /api in the environment.ts
     return this.http.post<any>(`${this.host}/login`, { username, password })
       .pipe(
         tap(response => {
+          console.log('Login response:', response);
           if (response && response.accessToken) {
+            console.log('Saving token to localStorage');
             this.saveToken(response.accessToken);
+          } else {
+            console.error('No accessToken in response');
           }
         })
       );
